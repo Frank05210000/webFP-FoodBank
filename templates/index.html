@@ -31,10 +31,19 @@
     </div>
     
     {% for shop in shops %}
+    {% set badge = None %}
+    {% if loop.index == 1 %}
+        {% set badge = trans('badge_most_supply') %}
+    {% elif loop.index == 2 %}
+        {% set badge = trans('badge_nearest') %}
+    {% endif %}
     <div class="col-md-4 mb-4">
         <div class="card h-100 border-0 shadow-sm">
             <div class="card-body">
                 <h5 class="card-title">{{ shop.name }}</h5>
+                {% if badge %}
+                <span class="badge bg-warning text-dark mb-2">{{ badge }}</span>
+                {% endif %}
                 <p class="card-text text-muted">
                     <i class="bi bi-geo-alt"></i> {{ shop.address }}<br>
                     <small>
