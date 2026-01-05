@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h3 class="fw-bold">{{ shop.name if shop else '我的商家' }}</h3>
+        <p class="text-muted mb-0">{{ shop.address }}</p>
+    </div>
+    <a class="btn btn-success" href="{{ url_for('new_food') }}"><i class="bi bi-plus-lg"></i> 新增物資</a>
+</div>
+
+<div class="row">
+    <div class="col-lg-7 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="mb-0">上架物資</h5>
+                </div>
+                {% for food in foods %}
+                <div class="d-flex align-items-center border-bottom py-2">
+                    <div class="flex-grow-1">
+                        <strong>{{ food.name }}</strong>
+                        <div class="text-muted small">剩餘 {{ food.quantity }} · {{ food.category or '未分類' }}</div>
+                    </div>
+                    <div class="btn-group">
+                        <a class="btn btn-outline-secondary btn-sm" href="{{ url_for('edit_food', food_id=food.id) }}">編輯</a>
+                        <form method="POST" action="{{ url_for('delete_food', food_id=food.id) }}">
+                            <button class="btn btn-outline-danger btn-sm" type="submit">刪除</button>
+                        </form>
+                    </div>
+                </div>
+                {% else %}
+                <p class="text-muted">尚未上架物資</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-5 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="mb-3">訂單</h5>
+                {% for order in orders %}
+                <div class="border rounded p-2 mb-2">
+                    <div class="d-flex justify-content-between">
+                        <span>#{{ order.id }} · {{ order.user.name }}</span>
+                        <span class="badge bg-{% if order.status=='pending' %}warning{% elif order.status=='completed' %}success{% else %}secondary{% endif %}">{{ order.status }}</span>
+                    </div>
+                    <div class="small text-muted">取貨 {{ order.pickup_time.strftime('%Y-%m-%d %H:%M') }}</div>
+                    <form class="mt-2 d-flex gap-2" method="POST" action="{{ url_for('update_order_status', order_id=order.id) }}">
+                        <select name="status" class="form-select form-select-sm">
+                            <option value="pending" {% if order.status=='pending' %}selected{% endif %}>待取貨</option>
+                            <option value="completed" {% if order.status=='completed' %}selected{% endif %}>已取貨</option>
+                            <option value="cancelled" {% if order.status=='cancelled' %}selected{% endif %}>已取消</option>
+                        </select>
+                        <button class="btn btn-outline-primary btn-sm" type="submit">更新</button>
+                    </form>
+                </div>
+                {% else %}
+                <p class="text-muted">目前沒有訂單</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

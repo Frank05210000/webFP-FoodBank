@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h3 class="mb-4">帳號管理</h3>
+                <form method="POST">
+                    <div class="mb-3">
+                        <label class="form-label">姓名</label>
+                        <input type="text" class="form-control" name="name" value="{{ current_user.name }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">電話</label>
+                        <input type="text" class="form-control" name="phone" value="{{ current_user.phone }}">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" value="{{ current_user.email }}" disabled>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">新密碼（若需變更）</label>
+                        <input type="password" class="form-control" name="new_password">
+                    </div>
+                    <button type="submit" class="btn btn-success w-100">保存更改</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

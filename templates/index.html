@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 text-center mb-4">
+        <h1 class="display-5 fw-bold">尋找附近的食物銀行</h1>
+        <p class="lead text-muted">減少浪費，分享愛心。立即預訂您需要的物資。</p>
+        <div class="d-flex justify-content-center gap-2">
+            {% if not current_user.is_authenticated %}
+                <a class="btn btn-success" href="{{ url_for('register') }}">我要領取物資</a>
+                <a class="btn btn-outline-success" href="{{ url_for('register_shop') }}">我是商家</a>
+            {% else %}
+                <a class="btn btn-success" href="#nearby-shops">查看附近據點</a>
+                <a class="btn btn-outline-secondary" href="{{ url_for('orders') }}">我的預訂</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- 地圖區塊 -->
+<div class="row mb-5">
+    <div class="col-12">
+        <div id="map" class="rounded shadow-sm" style="height: 400px; width: 100%;"></div>
+    </div>
+</div>
+
+<!-- 商家列表區塊 -->
+<div class="row" id="nearby-shops">
+    <div class="col-12 mb-3">
+        <h3>附近的據點</h3>
+    </div>
+    
+    {% for shop in shops %}
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">{{ shop.name }}</h5>
+                <p class="card-text text-muted">
+                    <i class="bi bi-geo-alt"></i> {{ shop.address }}<br>
+                    <small>
+                        營業時間:
+                        {% if shop.opening_time %}{{ shop.opening_time.strftime('%H:%M') }}{% else %}--{% endif %} -
+                        {% if shop.closing_time %}{{ shop.closing_time.strftime('%H:%M') }}{% else %}--{% endif %}
+                    </small>
+                </p>
+                <p class="card-text">
+                    剩餘物資: 
+                    {% if shop.available_quantity > 0 %}
+                        <span class="badge bg-success">{{ shop.available_quantity }} 份</span>
+                    {% else %}
+                        <span class="badge bg-secondary">已領完</span>
+                    {% endif %}
+                </p>
+                
+                <a href="{{ url_for('shop_detail', shop_id=shop.id) }}" class="btn btn-primary w-100 {% if shop.available_quantity <= 0 %}disabled{% endif %}">
+                    {% if shop.available_quantity > 0 %}查看詳情{% else %}已領完{% endif %}
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- 將商家資料傳遞給 JS 以繪製地圖 -->
+<script>
+    var shopData = [
+        {% for shop in shops %}
+        {
+            name: "{{ shop.name }}",
+            lat: {{ shop.latitude or 0 }},
+            lng: {{ shop.longitude or 0 }},
+            address: "{{ shop.address }}",
+            food_count: {{ shop.available_quantity }}
+        },
+        {% endfor %}
+    ];
+</script>
+{% endblock %}
