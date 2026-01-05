@@ -2,7 +2,7 @@
 {% block content %}
 <div class="row">
     <div class="col-12 mb-4">
-        <h3 class="fw-bold">我的預訂</h3>
+        <h3 class="fw-bold">{{ trans('orders_title') }}</h3>
     </div>
     {% for order in orders %}
     <div class="col-12 mb-3">
@@ -14,18 +14,18 @@
                         <h5 class="mb-1">#{{ order.id }} · {{ order.shop.name }}</h5>
                         <div class="d-flex align-items-center gap-2">
                             <span class="badge bg-{% if order.status=='pending' %}warning{% elif order.status=='completed' %}success{% else %}secondary{% endif %}">
-                                {{ order.status }}
+                                {{ trans('status_' ~ order.status) }}
                             </span>
                             {% if order.status == 'pending' %}
                             <form method="POST" action="{{ url_for('cancel_order', order_id=order.id) }}">
-                                <button class="btn btn-outline-danger btn-sm">取消預訂</button>
+                                <button class="btn btn-outline-danger btn-sm">{{ trans('btn_cancel_order') }}</button>
                             </form>
                             {% endif %}
                         </div>
                     </div>
-                    <p class="mb-1 text-muted">取貨時間：{{ order.pickup_time.strftime('%Y-%m-%d %H:%M') }}</p>
+                    <p class="mb-1 text-muted">{{ trans('checkout_pickup_time') }}: {{ order.pickup_time.strftime('%Y-%m-%d %H:%M') }}</p>
                     <p class="mb-0 small text-muted">
-                        品項：
+                        {{ trans('orders_items_label') }}:
                         {% for item in order.items %}
                             {{ item.food.name }} x {{ item.quantity }}{% if not loop.last %}、{% endif %}
                         {% endfor %}
@@ -36,7 +36,7 @@
     </div>
     {% else %}
     <div class="col-12 text-center text-muted">
-        目前沒有預訂。
+        {{ trans('orders_no_data') }}
     </div>
     {% endfor %}
 </div>

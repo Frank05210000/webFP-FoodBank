@@ -4,6 +4,7 @@ from flask_login import LoginManager, login_user, logout_user, current_user, log
 from config import Config
 from extensions import db, migrate
 from models import User, Shop, Food, Order, OrderItem
+from translations import translations
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -11,6 +12,10 @@ app.config.from_object(Config)
 # 初始化擴充套件
 db.init_app(app)
 migrate.init_app(app, db)
+
+# 語言設定
+LANGUAGES = list(translations.keys())
+
 
 # 登入管理
 login_manager = LoginManager(app)
@@ -25,6 +30,30 @@ def user_is(role):
 
 def shop_required():
     return current_user.is_authenticated and current_user.role == 'shop'
+
+def get_lang():
+    lang = session.get('lang', 'en')
+    if lang not in translations:
+        lang = 'en'
+        session['lang'] = lang
+    return lang
+
+def translate(key, **kwargs):
+    lang = get_lang()
+    default = translations.get('en', {})
+    lang_dict = translations.get(lang, {})
+    text = lang_dict.get(key, default.get(key, key))
+    if kwargs:
+        return text.format(**kwargs)
+    return text
+
+@app.context_processor
+def inject_translations():
+    return dict(
+        trans=lambda key, **kwargs: translate(key, **kwargs),
+        current_lang=get_lang(),
+        languages=LANGUAGES
+    )
 
 def _get_cart():
     return session.get('cart', {})
@@ -55,6 +84,14 @@ def index():
     shops = Shop.query.all()
     return render_template('index.html', shops=shops)
 
+@app.route('/lang/<lang_code>')
+def switch_language(lang_code):
+    if lang_code not in translations:
+        abort(404)
+    session['lang'] = lang_code
+    flash(translate('flash_lang_switched'), 'info')
+    return redirect(request.referrer or url_for('index'))
+
 # --- 認證流程 ---
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -64,14 +101,14 @@ def register():
         phone = request.form.get('phone')
         password = request.form.get('password')
         if User.query.filter_by(email=email).first():
-            flash('此 Email 已註冊', 'warning')
+            flash(translate('flash_email_exists'), 'warning')
             return redirect(url_for('register'))
         user = User(name=name, email=email, phone=phone, role='user')
         user.set_password(password)
         db.session.add(user)
         db.session.commit()
         login_user(user)
-        flash('註冊成功，歡迎加入！', 'success')
+        flash(translate('flash_register_success'), 'success')
         return redirect(url_for('index'))
     return render_template('register.html')
 
@@ -90,7 +127,7 @@ def register_shop():
         longitude = request.form.get('longitude') or None
 
         if User.query.filter_by(email=email).first():
-            flash('此 Email 已註冊', 'warning')
+            flash(translate('flash_email_exists'), 'warning')
             return redirect(url_for('register_shop'))
 
         user = User(name=owner_name, email=email, phone=phone, role='shop')
@@ -110,7 +147,7 @@ def register_shop():
         db.session.add(shop)
         db.session.commit()
         login_user(user)
-        flash('商家註冊成功，開始上架物資吧！', 'success')
+        flash(translate('flash_shop_register_success'), 'success')
         return redirect(url_for('shop_dashboard'))
     return render_template('register_shop.html')
 
@@ -122,16 +159,16 @@ def login():
         user = User.query.filter_by(email=email).first()
         if user and user.check_password(password):
             login_user(user)
-            flash('登入成功', 'success')
+            flash(translate('flash_login_success'), 'success')
             next_page = request.args.get('next')
             return redirect(next_page or url_for('index'))
-        flash('帳號或密碼錯誤', 'danger')
+        flash(translate('flash_login_failed'), 'danger')
     return render_template('login.html')
 
 @app.route('/logout')
 def logout():
     logout_user()
-    flash('已登出', 'info')
+    flash(translate('flash_logout'), 'info')
     return redirect(url_for('index'))
 
 # --- 民眾端 ---
@@ -151,7 +188,7 @@ def add_to_cart():
     # 確保購物車僅包含同一商家
     existing_shop = cart.get('shop_id')
     if existing_shop and existing_shop != food.shop_id:
-        flash('購物車已包含其他商家的品項，請先結帳或清空。', 'warning')
+        flash(translate('flash_cart_conflict'), 'warning')
         return redirect(url_for('shop_detail', shop_id=food.shop_id))
 
     items = cart.get('items', {})
@@ -160,7 +197,7 @@ def add_to_cart():
     cart['items'] = items
     cart['shop_id'] = food.shop_id
     _save_cart(cart)
-    flash(f'{food.name} 已加入購物車', 'success')
+    flash(translate('flash_item_added', name=food.name), 'success')
     return redirect(url_for('shop_detail', shop_id=food.shop_id))
 
 @app.route('/cart/remove/<int:food_id>', methods=['POST'])
@@ -173,7 +210,7 @@ def remove_from_cart(food_id):
     if not items:
         cart.clear()
     _save_cart(cart)
-    flash('已移除品項', 'info')
+    flash(translate('flash_item_removed'), 'info')
     return redirect(url_for('checkout'))
 
 @app.route('/checkout', methods=['GET', 'POST'])
@@ -182,7 +219,7 @@ def checkout():
     cart = _get_cart()
     items = cart.get('items', {})
     if not items:
-        flash('購物車是空的', 'info')
+        flash(translate('flash_cart_empty'), 'info')
         return redirect(url_for('index'))
 
     foods = Food.query.filter(Food.id.in_(map(int, items.keys()))).all()
@@ -192,16 +229,16 @@ def checkout():
     if request.method == 'POST':
         pickup_time_str = request.form.get('pickup_time')
         if not pickup_time_str:
-            flash('請選擇取貨時間', 'warning')
+            flash(translate('flash_select_pickup'), 'warning')
             return redirect(url_for('checkout'))
 
         pickup_dt = datetime.combine(date.today(), datetime.strptime(pickup_time_str, '%H:%M').time())
         now = datetime.now()
         if pickup_dt <= now:
-            flash('取貨時間需晚於現在', 'warning')
+            flash(translate('flash_pickup_future'), 'warning')
             return redirect(url_for('checkout'))
         if shop and shop.closing_time and pickup_dt.time() > shop.closing_time:
-            flash('取貨時間不可超過營業時間', 'warning')
+            flash(translate('flash_pickup_hours'), 'warning')
             return redirect(url_for('checkout'))
 
         order = Order(user_id=current_user.id, shop_id=shop.id, pickup_time=pickup_dt, status='pending')
@@ -217,7 +254,7 @@ def checkout():
             db.session.add(order_item)
         db.session.commit()
         session.pop('cart', None)
-        flash('預訂成功！', 'success')
+        flash(translate('flash_booking_success'), 'success')
         return redirect(url_for('order_success', order_id=order.id))
 
     return render_template('checkout.html', items=items, foods=food_map, shop=shop)
@@ -227,7 +264,7 @@ def checkout():
 def order_success(order_id):
     order = Order.query.get_or_404(order_id)
     if order.user_id != current_user.id and not user_is('admin'):
-        flash('無權查看此訂單', 'danger')
+        flash(translate('flash_forbidden_order'), 'danger')
         return redirect(url_for('index'))
     return render_template('order_success.html', order=order)
 
@@ -246,16 +283,16 @@ def cancel_order(order_id):
     if not (user_is_order_owner or user_is_shop_owner or user_is('admin')):
         abort(403)
     if order.status == 'completed':
-        flash('已完成的訂單無法取消', 'warning')
+        flash(translate('flash_order_completed'), 'warning')
         return redirect(request.referrer or url_for('orders'))
     if order.status != 'cancelled':
         _restock_order(order)
         order.status = 'cancelled'
         order.completed_at = None
         db.session.commit()
-        flash('訂單已取消', 'info')
+        flash(translate('flash_order_cancelled'), 'info')
     else:
-        flash('訂單已取消', 'info')
+        flash(translate('flash_order_cancelled'), 'info')
     return redirect(request.referrer or url_for('orders'))
 
 @app.route('/account', methods=['GET', 'POST'])
@@ -268,7 +305,7 @@ def account():
         if new_password:
             current_user.set_password(new_password)
         db.session.commit()
-        flash('帳號已更新', 'success')
+        flash(translate('flash_profile_updated'), 'success')
         return redirect(url_for('account'))
     return render_template('account.html')
 
@@ -277,7 +314,7 @@ def account():
 @login_required
 def shop_dashboard():
     if not shop_required():
-        flash('只有商家可以存取', 'danger')
+        flash(translate('flash_shop_only'), 'danger')
         return redirect(url_for('index'))
     shop = current_user.shop
     foods = shop.foods.order_by(Food.created_at.desc()).all() if shop else []
@@ -288,7 +325,7 @@ def shop_dashboard():
 @login_required
 def new_food():
     if not shop_required():
-        flash('只有商家可以存取', 'danger')
+        flash(translate('flash_shop_only'), 'danger')
         return redirect(url_for('index'))
     shop = current_user.shop
     if request.method == 'POST':
@@ -304,7 +341,7 @@ def new_food():
         )
         db.session.add(food)
         db.session.commit()
-        flash('已新增物資', 'success')
+        flash(translate('flash_food_created'), 'success')
         return redirect(url_for('shop_dashboard'))
     return render_template('food_form.html', action='create')
 
@@ -312,7 +349,7 @@ def new_food():
 @login_required
 def edit_food(food_id):
     if not shop_required():
-        flash('只有商家可以存取', 'danger')
+        flash(translate('flash_shop_only'), 'danger')
         return redirect(url_for('index'))
     food = Food.query.get_or_404(food_id)
     if request.method == 'POST':
@@ -324,7 +361,7 @@ def edit_food(food_id):
         food.description = request.form.get('description')
         food.is_active = request.form.get('is_active') == 'true'
         db.session.commit()
-        flash('已更新物資', 'success')
+        flash(translate('flash_food_updated'), 'success')
         return redirect(url_for('shop_dashboard'))
     return render_template('food_form.html', action='edit', food=food)
 
@@ -332,27 +369,27 @@ def edit_food(food_id):
 @login_required
 def delete_food(food_id):
     if not shop_required():
-        flash('只有商家可以存取', 'danger')
+        flash(translate('flash_shop_only'), 'danger')
         return redirect(url_for('index'))
     food = Food.query.get_or_404(food_id)
     db.session.delete(food)
     db.session.commit()
-    flash('已刪除物資', 'info')
+    flash(translate('flash_food_deleted'), 'info')
     return redirect(url_for('shop_dashboard'))
 
 @app.route('/shop/orders/<int:order_id>/status', methods=['POST'])
 @login_required
 def update_order_status(order_id):
     if not shop_required():
-        flash('只有商家可以存取', 'danger')
+        flash(translate('flash_shop_only'), 'danger')
         return redirect(url_for('index'))
     order = Order.query.get_or_404(order_id)
     status = request.form.get('status')
     if status not in ['pending', 'completed', 'cancelled']:
-        flash('無效的狀態', 'warning')
+        flash(translate('flash_invalid_status'), 'warning')
         return redirect(url_for('shop_dashboard'))
     if order.status == 'cancelled' and status != 'cancelled':
-        flash('已取消的訂單無法更改狀態', 'warning')
+        flash(translate('flash_cannot_update_cancelled'), 'warning')
         return redirect(url_for('shop_dashboard'))
     if status == 'cancelled' and order.status != 'cancelled':
         _restock_order(order)
@@ -362,7 +399,7 @@ def update_order_status(order_id):
     else:
         order.completed_at = None
     db.session.commit()
-    flash('訂單狀態已更新', 'success')
+    flash(translate('flash_status_updated'), 'success')
     return redirect(url_for('shop_dashboard'))
 
 # --- 後台管理 ---
@@ -370,7 +407,7 @@ def update_order_status(order_id):
 @login_required
 def admin_dashboard():
     if not user_is('admin'):
-        flash('只有管理者可以存取', 'danger')
+        flash(translate('flash_admin_only'), 'danger')
         return redirect(url_for('index'))
     shops = Shop.query.all()
     users = User.query.all()
@@ -390,7 +427,7 @@ def delete_shop(shop_id):
     shop = Shop.query.get_or_404(shop_id)
     _delete_shop(shop)
     db.session.commit()
-    flash('商家已刪除', 'info')
+    flash(translate('flash_shop_deleted'), 'info')
     return redirect(url_for('admin_dashboard'))
 
 @app.route('/admin/users/<int:user_id>/delete', methods=['POST'])
@@ -400,7 +437,7 @@ def delete_user(user_id):
         abort(403)
     user = User.query.get_or_404(user_id)
     if user.id == current_user.id or user.role == 'admin':
-        flash('無法刪除管理者帳號', 'warning')
+        flash(translate('flash_cannot_delete_admin'), 'warning')
         return redirect(url_for('admin_dashboard'))
     for order in user.orders.all():
         _delete_order(order)
@@ -408,7 +445,7 @@ def delete_user(user_id):
         _delete_shop(user.shop)
     db.session.delete(user)
     db.session.commit()
-    flash('用戶已刪除', 'info')
+    flash(translate('flash_user_deleted'), 'info')
     return redirect(url_for('admin_dashboard'))
 
 # 建立資料庫表格的 CLI 指令 (方便開發使用)

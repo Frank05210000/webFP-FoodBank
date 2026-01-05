@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="zh-TW">
+<html lang="{{ 'zh-TW' if current_lang == 'zh' else 'en' }}">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>食物銀行預訂系統</title>
+    <title>{{ trans('site_name') }}</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
@@ -17,28 +17,42 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
       <div class="container">
         <a class="navbar-brand fw-bold text-success" href="{{ url_for('index') }}">
-            <i class="bi bi-basket"></i> 食物銀行
+            <i class="bi bi-basket"></i> {{ trans('site_name') }}
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav ms-auto">
-            <li class="nav-item"><a class="nav-link" href="{{ url_for('index') }}">首頁</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('index') }}">{{ trans('nav_home') }}</a></li>
             {% if current_user.is_authenticated %}
-              <li class="nav-item"><a class="nav-link" href="{{ url_for('orders') }}">預訂紀錄</a></li>
-              <li class="nav-item"><a class="nav-link" href="{{ url_for('account') }}">帳號</a></li>
+              <li class="nav-item"><a class="nav-link" href="{{ url_for('orders') }}">{{ trans('nav_orders') }}</a></li>
+              <li class="nav-item"><a class="nav-link" href="{{ url_for('account') }}">{{ trans('nav_account') }}</a></li>
               {% if current_user.role == 'shop' %}
-                <li class="nav-item"><a class="nav-link" href="{{ url_for('shop_dashboard') }}">商家後台</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('shop_dashboard') }}">{{ trans('nav_shop_dashboard') }}</a></li>
               {% endif %}
               {% if current_user.role == 'admin' %}
-                <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_dashboard') }}">管理者</a></li>
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_dashboard') }}">{{ trans('nav_admin') }}</a></li>
               {% endif %}
-              <li class="nav-item"><a class="nav-link text-danger" href="{{ url_for('logout') }}">登出</a></li>
+              <li class="nav-item"><a class="nav-link text-danger" href="{{ url_for('logout') }}">{{ trans('nav_logout') }}</a></li>
             {% else %}
-              <li class="nav-item"><a class="nav-link" href="{{ url_for('login') }}">登入</a></li>
-              <li class="nav-item"><a class="nav-link btn btn-outline-success ms-2" href="{{ url_for('register') }}">註冊</a></li>
+              <li class="nav-item"><a class="nav-link" href="{{ url_for('login') }}">{{ trans('nav_login') }}</a></li>
+              <li class="nav-item"><a class="nav-link btn btn-outline-success ms-2" href="{{ url_for('register') }}">{{ trans('nav_register') }}</a></li>
             {% endif %}
+            <li class="nav-item dropdown ms-2">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                {{ current_lang.upper() }}
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end">
+                {% for lang in languages %}
+                  <li>
+                    <a class="dropdown-item {% if lang == current_lang %}active{% endif %}" href="{{ url_for('switch_language', lang_code=lang) }}">
+                      {{ trans('language_' ~ lang) }}
+                    </a>
+                  </li>
+                {% endfor %}
+              </ul>
+            </li>
           </ul>
         </div>
       </div>
@@ -64,7 +78,7 @@
     <!-- Footer -->
     <footer class="py-4 mt-5 bg-light border-top">
         <div class="container text-center text-muted">
-            &copy; 2024 食物銀行預訂系統
+            &copy; {{ trans('footer_text') }}
         </div>
     </footer>
 

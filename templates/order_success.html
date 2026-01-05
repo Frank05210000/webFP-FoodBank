@@ -2,18 +2,18 @@
 {% block content %}
 <div class="text-center py-5">
     <div class="display-4 text-success mb-3"><i class="bi bi-check-circle-fill"></i></div>
-    <h3 class="mb-2">預訂成功！</h3>
-    <p class="text-muted">請在 {{ order.pickup_time.strftime('%H:%M') }} 前取貨</p>
+    <h3 class="mb-2">{{ trans('order_success_title') }}</h3>
+    <p class="text-muted">{{ trans('order_success_message') }}</p>
     <div class="card mx-auto shadow-sm" style="max-width: 420px;">
         <div class="card-body">
-            <p class="mb-1">訂單編號：<strong>#{{ order.id }}</strong></p>
-            <p class="mb-1">商家：{{ order.shop.name }}</p>
-            <p class="mb-0">狀態：{{ order.status }}</p>
+            <p class="mb-1">{{ trans('order_success_id') }}: <strong>#{{ order.id }}</strong></p>
+            <p class="mb-1">{{ trans('order_success_shop') }}: {{ order.shop.name }}</p>
+            <p class="mb-0">{{ trans('order_success_status') }}: {{ trans('status_' ~ order.status) }}</p>
         </div>
     </div>
     <div class="mt-4">
-        <a class="btn btn-success me-2" href="{{ url_for('orders') }}">查看預訂紀錄</a>
-        <a class="btn btn-outline-secondary" href="{{ url_for('index') }}">返回首頁</a>
+        <a class="btn btn-success me-2" href="{{ url_for('orders') }}">{{ trans('btn_view_orders') }}</a>
+        <a class="btn btn-outline-secondary" href="{{ url_for('index') }}">{{ trans('btn_back_home') }}</a>
     </div>
 </div>
 {% endblock %}

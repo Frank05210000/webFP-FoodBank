@@ -3,15 +3,15 @@
 {% block content %}
 <div class="row">
     <div class="col-12 text-center mb-4">
-        <h1 class="display-5 fw-bold">尋找附近的食物銀行</h1>
-        <p class="lead text-muted">減少浪費，分享愛心。立即預訂您需要的物資。</p>
+        <h1 class="display-5 fw-bold">{{ trans('hero_title') }}</h1>
+        <p class="lead text-muted">{{ trans('hero_subtitle') }}</p>
         <div class="d-flex justify-content-center gap-2">
             {% if not current_user.is_authenticated %}
-                <a class="btn btn-success" href="{{ url_for('register') }}">我要領取物資</a>
-                <a class="btn btn-outline-success" href="{{ url_for('register_shop') }}">我是商家</a>
+                <a class="btn btn-success" href="{{ url_for('register') }}">{{ trans('hero_cta_public') }}</a>
+                <a class="btn btn-outline-success" href="{{ url_for('register_shop') }}">{{ trans('hero_cta_shop') }}</a>
             {% else %}
-                <a class="btn btn-success" href="#nearby-shops">查看附近據點</a>
-                <a class="btn btn-outline-secondary" href="{{ url_for('orders') }}">我的預訂</a>
+                <a class="btn btn-success" href="#nearby-shops">{{ trans('hero_cta_view') }}</a>
+                <a class="btn btn-outline-secondary" href="{{ url_for('orders') }}">{{ trans('hero_cta_orders') }}</a>
             {% endif %}
         </div>
     </div>
@@ -27,7 +27,7 @@
 <!-- 商家列表區塊 -->
 <div class="row" id="nearby-shops">
     <div class="col-12 mb-3">
-        <h3>附近的據點</h3>
+        <h3>{{ trans('section_nearby') }}</h3>
     </div>
     
     {% for shop in shops %}
@@ -38,22 +38,22 @@
                 <p class="card-text text-muted">
                     <i class="bi bi-geo-alt"></i> {{ shop.address }}<br>
                     <small>
-                        營業時間:
+                        {{ trans('label_opening_hours') }}:
                         {% if shop.opening_time %}{{ shop.opening_time.strftime('%H:%M') }}{% else %}--{% endif %} -
                         {% if shop.closing_time %}{{ shop.closing_time.strftime('%H:%M') }}{% else %}--{% endif %}
                     </small>
                 </p>
                 <p class="card-text">
-                    剩餘物資: 
+                    {{ trans('label_remaining') }}:
                     {% if shop.available_quantity > 0 %}
-                        <span class="badge bg-success">{{ shop.available_quantity }} 份</span>
+                        <span class="badge bg-success">{{ shop.available_quantity }}</span>
                     {% else %}
-                        <span class="badge bg-secondary">已領完</span>
+                        <span class="badge bg-secondary">{{ trans('label_sold_out') }}</span>
                     {% endif %}
                 </p>
                 
                 <a href="{{ url_for('shop_detail', shop_id=shop.id) }}" class="btn btn-primary w-100 {% if shop.available_quantity <= 0 %}disabled{% endif %}">
-                    {% if shop.available_quantity > 0 %}查看詳情{% else %}已領完{% endif %}
+                    {% if shop.available_quantity > 0 %}{{ trans('label_view_details') }}{% else %}{{ trans('label_sold_out') }}{% endif %}
                 </a>
             </div>
         </div>
@@ -63,6 +63,7 @@
 
 <!-- 將商家資料傳遞給 JS 以繪製地圖 -->
 <script>
+    var userLocationLabel = {{ trans('map_user_location')|tojson }};
     var shopData = [
         {% for shop in shops %}
         {

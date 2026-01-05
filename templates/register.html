@@ -4,31 +4,31 @@
     <div class="col-md-6">
         <div class="card shadow-sm">
             <div class="card-body">
-                <h3 class="mb-4 text-center">註冊為民眾</h3>
+                <h3 class="mb-4 text-center">{{ trans('register_title') }}</h3>
                 <form method="POST">
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">姓名</label>
+                            <label class="form-label">{{ trans('field_name') }}</label>
                             <input type="text" class="form-control" name="name" required>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">電話</label>
+                            <label class="form-label">{{ trans('field_phone') }}</label>
                             <input type="text" class="form-control" name="phone">
                         </div>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Email</label>
+                        <label class="form-label">{{ trans('field_email') }}</label>
                         <input type="email" class="form-control" name="email" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">密碼</label>
+                        <label class="form-label">{{ trans('field_password') }}</label>
                         <input type="password" class="form-control" name="password" required>
                     </div>
-                    <button type="submit" class="btn btn-success w-100">建立帳號</button>
+                    <button type="submit" class="btn btn-success w-100">{{ trans('btn_create_account') }}</button>
                 </form>
                 <div class="text-center mt-3">
-                    <a href="{{ url_for('login') }}">已經有帳號？登入</a> · 
-                    <a href="{{ url_for('register_shop') }}">我要註冊商家</a>
+                    <a href="{{ url_for('login') }}">{{ trans('link_have_account') }}</a> · 
+                    <a href="{{ url_for('register_shop') }}">{{ trans('link_register_shop') }}</a>
                 </div>
             </div>
         </div>

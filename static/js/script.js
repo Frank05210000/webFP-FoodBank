@@ -15,7 +15,8 @@ document.addEventListener('DOMContentLoaded', function() {
             hasUserLocation = true;
             var latlng = [pos.coords.latitude, pos.coords.longitude];
             map.setView(latlng, 13);
-            L.marker(latlng).addTo(map).bindPopup('<b>您在這裡</b>').openPopup();
+            var label = window.userLocationLabel || 'You are here';
+            L.marker(latlng).addTo(map).bindPopup('<b>' + label + '</b>').openPopup();
         });
     }
 

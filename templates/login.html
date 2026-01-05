@@ -4,20 +4,20 @@
     <div class="col-md-5">
         <div class="card shadow-sm">
             <div class="card-body">
-                <h3 class="mb-4 text-center">登入</h3>
+                <h3 class="mb-4 text-center">{{ trans('login_title') }}</h3>
                 <form method="POST">
                     <div class="mb-3">
-                        <label class="form-label">Email</label>
+                        <label class="form-label">{{ trans('field_email') }}</label>
                         <input type="email" class="form-control" name="email" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">密碼</label>
+                        <label class="form-label">{{ trans('field_password') }}</label>
                         <input type="password" class="form-control" name="password" required>
                     </div>
-                    <button type="submit" class="btn btn-success w-100">登入</button>
+                    <button type="submit" class="btn btn-success w-100">{{ trans('btn_login') }}</button>
                 </form>
                 <div class="text-center mt-3">
-                    <a href="{{ url_for('register') }}">還沒有帳號？註冊</a>
+                    <a href="{{ url_for('register') }}">{{ trans('link_no_account') }}</a>
                 </div>
             </div>
         </div>

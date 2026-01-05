@@ -5,12 +5,12 @@
         <h2 class="fw-bold">{{ shop.name }}</h2>
         <p class="text-muted mb-1"><i class="bi bi-geo-alt"></i> {{ shop.address }}</p>
         <p class="text-muted">
-            營業時間：{% if shop.opening_time %}{{ shop.opening_time.strftime('%H:%M') }}{% else %}--{% endif %} - {% if shop.closing_time %}{{ shop.closing_time.strftime('%H:%M') }}{% else %}--{% endif %}
+            {{ trans('label_opening_hours') }}: {% if shop.opening_time %}{{ shop.opening_time.strftime('%H:%M') }}{% else %}--{% endif %} - {% if shop.closing_time %}{{ shop.closing_time.strftime('%H:%M') }}{% else %}--{% endif %}
         </p>
     </div>
     <div class="col-lg-4 text-lg-end">
-        <a class="btn btn-outline-secondary me-2" href="{{ url_for('index') }}">返回首頁</a>
-        <a class="btn btn-success" href="{{ url_for('checkout') }}">查看購物車</a>
+        <a class="btn btn-outline-secondary me-2" href="{{ url_for('index') }}">{{ trans('btn_back_home') }}</a>
+        <a class="btn btn-success" href="{{ url_for('checkout') }}">{{ trans('btn_view_cart') }}</a>
     </div>
 </div>
 
@@ -23,14 +23,14 @@
                 <h5 class="card-title">{{ food.name }}</h5>
                 <p class="text-muted small mb-2">{{ food.description or ' ' }}</p>
                 <p class="mb-2">
-                    <span class="badge bg-primary">{{ food.category or '未分類' }}</span>
-                    <span class="badge bg-success">剩餘 {{ food.quantity }} 份</span>
+                    <span class="badge bg-primary">{{ food.category or trans('label_category_default') }}</span>
+                    <span class="badge bg-success">{{ trans('label_remaining') }} {{ food.quantity }}</span>
                 </p>
                 <form method="POST" action="{{ url_for('add_to_cart') }}" class="mt-auto">
                     <input type="hidden" name="food_id" value="{{ food.id }}">
                     <div class="input-group mb-2">
                         <input type="number" name="quantity" class="form-control" value="1" min="1" max="{{ food.quantity }}">
-                        <button class="btn btn-success" type="submit" {% if food.quantity <= 0 %}disabled{% endif %}>加入購物車</button>
+                        <button class="btn btn-success" type="submit" {% if food.quantity <= 0 %}disabled{% endif %}>{{ trans('btn_add_to_cart') }}</button>
                     </div>
                 </form>
             </div>
