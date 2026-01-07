@@ -56,6 +56,14 @@
                             <input type="number" step="any" class="form-control" name="longitude" placeholder="121.565">
                         </div>
                     </div>
+                    <div class="mb-3 text-end">
+                        <button type="button"
+                            id="btn-fill-location"
+                            class="btn btn-outline-primary btn-sm"
+                            data-error="{{ trans('geo_error') }}">
+                            {{ trans('btn_use_my_location') }}
+                        </button>
+                    </div>
                     <button type="submit" class="btn btn-success w-100">{{ trans('btn_create_shop_account') }}</button>
                 </form>
             </div>

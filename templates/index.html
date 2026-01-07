@@ -19,7 +19,10 @@
 
 <!-- 地圖區塊 -->
 <div class="row mb-5">
-    <div class="col-12">
+    <div class="col-12 position-relative">
+        <button id="btn-my-location" class="btn btn-outline-danger btn-sm map-floating-btn">
+            {{ trans('btn_my_location') }}
+        </button>
         <div id="map" class="rounded shadow-sm" style="height: 400px; width: 100%;"></div>
     </div>
 </div>
@@ -31,19 +34,23 @@
     </div>
     
     {% for shop in shops %}
-    {% set badge = None %}
-    {% if loop.index == 1 %}
-        {% set badge = trans('badge_most_supply') %}
-    {% elif loop.index == 2 %}
-        {% set badge = trans('badge_nearest') %}
-    {% endif %}
     <div class="col-md-4 mb-4">
-        <div class="card h-100 border-0 shadow-sm">
+        <div class="card h-100 border-0 shadow-sm shop-card" data-id="{{ shop.id }}" data-shop-index="{{ loop.index0 }}" data-quantity="{{ shop.available_quantity }}" data-lat="{{ shop.latitude or '' }}" data-lng="{{ shop.longitude or '' }}">
             <div class="card-body">
-                <h5 class="card-title">{{ shop.name }}</h5>
-                {% if badge %}
-                <span class="badge bg-warning text-dark mb-2">{{ badge }}</span>
-                {% endif %}
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <h5 class="card-title mb-0">{{ shop.name }}</h5>
+                    <div class="shop-badges"></div>
+                </div>
+                <div class="mb-2">
+                    <button type="button"
+                        class="btn btn-outline-secondary btn-sm btn-locate"
+                        data-shop-id="{{ shop.id }}"
+                        data-lat="{{ shop.latitude or '' }}"
+                        data-lng="{{ shop.longitude or '' }}"
+                        {% if not shop.latitude or not shop.longitude %}disabled{% endif %}>
+                        {{ trans('btn_show_on_map') }}
+                    </button>
+                </div>
                 <p class="card-text text-muted">
                     <i class="bi bi-geo-alt"></i> {{ shop.address }}<br>
                     <small>
@@ -73,9 +80,14 @@
 <!-- 將商家資料傳遞給 JS 以繪製地圖 -->
 <script>
     var userLocationLabel = {{ trans('map_user_location')|tojson }};
+    var badgeLabels = {
+        most: {{ trans('badge_most_supply')|tojson }},
+        nearest: {{ trans('badge_nearest')|tojson }}
+    };
     var shopData = [
         {% for shop in shops %}
         {
+            id: {{ shop.id }},
             name: "{{ shop.name }}",
             lat: {{ shop.latitude or 0 }},
             lng: {{ shop.longitude or 0 }},
@@ -84,5 +96,6 @@
         },
         {% endfor %}
     ];
+    var transRemaining = {{ trans('label_remaining')|tojson }};
 </script>
 {% endblock %}

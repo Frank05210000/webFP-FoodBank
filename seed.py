@@ -62,7 +62,91 @@ def seed_data():
             rating=4.2
         )
 
-        db.session.add_all([shop1, shop2, shop3])
+        shop4 = Shop(
+            name="仁愛市場 - 蔬果區",
+            manager_email="shop4@example.com",
+            phone="02-2345-6789",
+            address="台北市中正區濟南路二段1號",
+            latitude=25.0405,
+            longitude=121.5340,
+            opening_time=datetime.strptime("07:00", "%H:%M").time(),
+            closing_time=datetime.strptime("19:00", "%H:%M").time(),
+            rating=4.1
+        )
+
+        shop5 = Shop(
+            name="社區食物銀行 - 大直館",
+            manager_email="shop5@example.com",
+            phone="02-5566-7788",
+            address="台北市中山區北安路780號",
+            latitude=25.0845,
+            longitude=121.5491,
+            opening_time=datetime.strptime("09:00", "%H:%M").time(),
+            closing_time=datetime.strptime("21:00", "%H:%M").time(),
+            rating=4.6
+        )
+
+        shop6 = Shop(
+            name="吉祥里愛心廚房",
+            manager_email="shop6@example.com",
+            phone="02-9876-5432",
+            address="台北市萬華區艋舺大道211號",
+            latitude=25.0365,
+            longitude=121.4970,
+            opening_time=datetime.strptime("11:00", "%H:%M").time(),
+            closing_time=datetime.strptime("20:00", "%H:%M").time(),
+            rating=4.0
+        )
+
+        shop7 = Shop(
+            name="幸福早餐屋",
+            manager_email="shop7@example.com",
+            phone="02-6677-8899",
+            address="新北市板橋區文化路一段188號",
+            latitude=25.0175,
+            longitude=121.4650,
+            opening_time=datetime.strptime("06:00", "%H:%M").time(),
+            closing_time=datetime.strptime("13:00", "%H:%M").time(),
+            rating=4.4
+        )
+
+        shop8 = Shop(
+            name="樂活超商 - 三重店",
+            manager_email="shop8@example.com",
+            phone="02-3355-8899",
+            address="新北市三重區重新路四段15號",
+            latitude=25.0590,
+            longitude=121.4890,
+            opening_time=datetime.strptime("08:00", "%H:%M").time(),
+            closing_time=datetime.strptime("23:30", "%H:%M").time(),
+            rating=4.3
+        )
+
+        shop9 = Shop(
+            name="安心便利店 - 永和",
+            manager_email="shop9@example.com",
+            phone="02-2233-9911",
+            address="新北市永和區中山路一段22號",
+            latitude=25.0041,
+            longitude=121.5168,
+            opening_time=datetime.strptime("00:00", "%H:%M").time(),
+            closing_time=datetime.strptime("23:59", "%H:%M").time(),
+            rating=4.5
+        )
+
+        shop10 = Shop(
+            name="慈恩寺食物分享點",
+            manager_email="shop10@example.com",
+            phone="02-1122-3344",
+            address="新北市新店區北新路二段88號",
+            latitude=24.9710,
+            longitude=121.5380,
+            opening_time=datetime.strptime("10:00", "%H:%M").time(),
+            closing_time=datetime.strptime("18:00", "%H:%M").time(),
+            rating=4.7
+        )
+
+        db.session.add_all([shop1, shop2, shop3, shop4, shop5, shop6, shop7, shop8, shop9, shop10])
         db.session.commit()
 
         # 建立食物
@@ -74,7 +158,7 @@ def seed_data():
                 quantity=12,
                 expiry_time=datetime.now() + timedelta(days=1),
                 description="白吐司一條，保存期限至明日",
-                photo_url="https://placehold.co/300x200?text=Toast"
+                photo_url="img/food-bread.png"
             ),
             Food(
                 shop_id=shop1.id,
@@ -83,7 +167,7 @@ def seed_data():
                 quantity=8,
                 expiry_time=datetime.now() + timedelta(days=2),
                 description="當季蔬菜組合",
-                photo_url="https://placehold.co/300x200?text=Veggies"
+                photo_url="img/food-veg.png"
             ),
             Food(
                 shop_id=shop1.id,
@@ -92,7 +176,7 @@ def seed_data():
                 quantity=6,
                 expiry_time=datetime.now() + timedelta(days=3),
                 description="當季水果禮盒",
-                photo_url="https://placehold.co/300x200?text=Fruit"
+                photo_url="img/food-fruit.png"
             ),
             Food(
                 shop_id=shop2.id,
@@ -101,7 +185,7 @@ def seed_data():
                 quantity=10,
                 expiry_time=datetime.now() + timedelta(hours=8),
                 description="今日現烤麵包福袋",
-                photo_url="https://placehold.co/300x200?text=Bread"
+                photo_url="img/food-bread.png"
             ),
             Food(
                 shop_id=shop2.id,
@@ -110,7 +194,7 @@ def seed_data():
                 quantity=5,
                 expiry_time=datetime.now() + timedelta(hours=10),
                 description="清爽沙拉組合",
-                photo_url="https://placehold.co/300x200?text=Salad"
+                photo_url="img/food-salad.png"
             ),
             Food(
                 shop_id=shop3.id,
@@ -119,7 +203,7 @@ def seed_data():
                 quantity=15,
                 expiry_time=datetime.now() + timedelta(hours=6),
                 description="鮪魚口味御飯糰",
-                photo_url="https://placehold.co/300x200?text=RiceBall"
+                photo_url="img/food-rice.png"
             ),
             Food(
                 shop_id=shop3.id,
@@ -128,7 +212,70 @@ def seed_data():
                 quantity=7,
                 expiry_time=datetime.now() + timedelta(hours=5),
                 description="便利商店熱食便當",
-                photo_url="https://placehold.co/300x200?text=Bento"
+                photo_url="img/food-bento.png"
+            ),
+            Food(
+                shop_id=shop4.id,
+                name="綜合蔬果盒",
+                category="蔬果",
+                quantity=9,
+                expiry_time=datetime.now() + timedelta(days=1),
+                description="市場當日新鮮蔬果組合",
+                photo_url="img/food-veg.png"
+            ),
+            Food(
+                shop_id=shop5.id,
+                name="營養餐包",
+                category="套餐",
+                quantity=11,
+                expiry_time=datetime.now() + timedelta(hours=12),
+                description="多種主食與配菜組合",
+                photo_url="img/food-bento.png"
+            ),
+            Food(
+                shop_id=shop6.id,
+                name="熱湯與麵食",
+                category="熱食",
+                quantity=6,
+                expiry_time=datetime.now() + timedelta(hours=4),
+                description="現煮湯品搭麵食",
+                photo_url="img/food-default.svg"
+            ),
+            Food(
+                shop_id=shop7.id,
+                name="即期早餐組",
+                category="早餐",
+                quantity=10,
+                expiry_time=datetime.now() + timedelta(hours=6),
+                description="三明治與飲料組合",
+                photo_url="img/food-bread.png"
+            ),
+            Food(
+                shop_id=shop8.id,
+                name="鮮蔬沙拉",
+                category="輕食",
+                quantity=8,
+                expiry_time=datetime.now() + timedelta(hours=8),
+                description="大量蔬菜與水果沙拉",
+                photo_url="img/food-salad.png"
+            ),
+            Food(
+                shop_id=shop9.id,
+                name="御飯糰套餐",
+                category="便當",
+                quantity=20,
+                expiry_time=datetime.now() + timedelta(hours=10),
+                description="多口味御飯糰與飲品",
+                photo_url="img/food-rice.png"
+            ),
+            Food(
+                shop_id=shop10.id,
+                name="寺院供餐",
+                category="熱食",
+                quantity=12,
+                expiry_time=datetime.now() + timedelta(hours=6),
+                description="寺院烹飪的素食餐點",
+                photo_url="img/food-default.svg"
             )
         ]
 

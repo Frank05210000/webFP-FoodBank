@@ -25,7 +25,7 @@
                 <form method="POST">
                     <div class="mb-3">
                         <label class="form-label">{{ trans('checkout_time_hint') }}</label>
-                        <input type="time" class="form-control" name="pickup_time" step="1800" required>
+                        <input type="time" class="form-control" name="pickup_time" required>
                         {% if shop and shop.closing_time %}
                             <small class="text-muted">{{ trans('checkout_closes_at') }} {{ shop.closing_time.strftime('%H:%M') }}</small>
                         {% endif %}

@@ -49,10 +49,19 @@ def translate(key, **kwargs):
 
 @app.context_processor
 def inject_translations():
+    def resolve_photo(photo_url):
+        if not photo_url:
+            return url_for('static', filename='img/food-default.svg')
+        if '://' in photo_url:
+            return photo_url
+        cleaned = photo_url.lstrip('/')
+        return url_for('static', filename=cleaned)
+
     return dict(
         trans=lambda key, **kwargs: translate(key, **kwargs),
         current_lang=get_lang(),
-        languages=LANGUAGES
+        languages=LANGUAGES,
+        resolve_photo=resolve_photo
     )
 
 def _get_cart():
