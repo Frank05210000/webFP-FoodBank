@@ -31,14 +31,14 @@
 ├── static/
 │   ├── css/style.css     # 自訂樣式
 │   └── js/script.js      # Leaflet/互動腳本
+├── tests/                # pytest 測試
+├── docs/                 # 文件區 (SETUP, TESTING, 規格、作業說明)
 ├── ref/                  # 參考範例檔案
-├── food_bank_spec.md     # 需求規格
-├── SETUP.md              # 安裝與啟動指南
 └── README.md             # 專案介紹 (本檔)
 ```
 
 ## 快速開始
-請參考 [SETUP.md](./SETUP.md) 完成環境建置、資料庫初始化與假資料載入。
+請參考 `docs/SETUP.md` 完成環境建置、資料庫初始化與假資料載入。Demo 帳號請見 `docs/ACCOUNTS.md`。
 
 啟動後於 `http://localhost:5001/` 體驗：
 - 民眾帳號：`user@example.com` / `password`

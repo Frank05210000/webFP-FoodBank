@@ -12,8 +12,8 @@
                             <input type="text" class="form-control" name="name" required>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label class="form-label">{{ trans('field_phone') }}</label>
-                            <input type="text" class="form-control" name="phone">
+                        <label class="form-label">{{ trans('field_phone') }}</label>
+                        <input type="text" class="form-control" name="phone" pattern="09\d{8}" maxlength="10" placeholder="09xxxxxxxx">
                         </div>
                     </div>
                     <div class="mb-3">

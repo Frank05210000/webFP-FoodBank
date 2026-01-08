@@ -1,4 +1,5 @@
 from datetime import datetime, date
+import re
 from flask import Flask, render_template, request, redirect, url_for, flash, session, abort
 from flask_login import LoginManager, login_user, logout_user, current_user, login_required
 from config import Config
@@ -15,6 +16,7 @@ migrate.init_app(app, db)
 
 # 語言設定
 LANGUAGES = list(translations.keys())
+PHONE_PATTERN = re.compile(r'^09\d{8}$')
 
 
 # 登入管理
@@ -46,6 +48,12 @@ def translate(key, **kwargs):
     if kwargs:
         return text.format(**kwargs)
     return text
+
+def phone_valid(phone):
+    # Allow empty/None; enforce 09xxxxxxxx when provided
+    if not phone:
+        return True
+    return bool(PHONE_PATTERN.match(phone))
 
 @app.context_processor
 def inject_translations():
@@ -109,6 +117,9 @@ def register():
         email = request.form.get('email')
         phone = request.form.get('phone')
         password = request.form.get('password')
+        if not phone_valid(phone):
+            flash(translate('flash_phone_invalid'), 'warning')
+            return redirect(url_for('register'))
         if User.query.filter_by(email=email).first():
             flash(translate('flash_email_exists'), 'warning')
             return redirect(url_for('register'))
@@ -135,6 +146,9 @@ def register_shop():
         latitude = request.form.get('latitude') or None
         longitude = request.form.get('longitude') or None
 
+        if not phone_valid(phone):
+            flash(translate('flash_phone_invalid'), 'warning')
+            return redirect(url_for('register_shop'))
         if User.query.filter_by(email=email).first():
             flash(translate('flash_email_exists'), 'warning')
             return redirect(url_for('register_shop'))
@@ -188,6 +202,7 @@ def shop_detail(shop_id):
     return render_template('shop_detail.html', shop=shop, foods=foods)
 
 @app.route('/cart/add', methods=['POST'])
+@login_required
 def add_to_cart():
     food_id = int(request.form.get('food_id'))
     quantity = int(request.form.get('quantity', 1))
@@ -210,6 +225,7 @@ def add_to_cart():
     return redirect(url_for('shop_detail', shop_id=food.shop_id))
 
 @app.route('/cart/remove/<int:food_id>', methods=['POST'])
+@login_required
 def remove_from_cart(food_id):
     cart = _get_cart()
     items = cart.get('items', {})
@@ -309,7 +325,11 @@ def cancel_order(order_id):
 def account():
     if request.method == 'POST':
         current_user.name = request.form.get('name')
-        current_user.phone = request.form.get('phone')
+        phone = request.form.get('phone')
+        if not phone_valid(phone):
+            flash(translate('flash_phone_invalid'), 'warning')
+            return redirect(url_for('account'))
+        current_user.phone = phone
         new_password = request.form.get('new_password')
         if new_password:
             current_user.set_password(new_password)

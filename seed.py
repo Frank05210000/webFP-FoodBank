@@ -18,9 +18,25 @@ def seed_data():
         shop_owner1.set_password("password")
         shop_owner2 = User(name="店長B", email="shop2@example.com", phone="02-8765-4321", role="shop")
         shop_owner2.set_password("password")
+        shop_owner3 = User(name="店長C", email="shop3@example.com", phone="02-2222-3333", role="shop")
+        shop_owner3.set_password("password")
+        shop_owner4 = User(name="店長D", email="shop4@example.com", phone="02-2345-6789", role="shop")
+        shop_owner4.set_password("password")
+        shop_owner5 = User(name="店長E", email="shop5@example.com", phone="02-5566-7788", role="shop")
+        shop_owner5.set_password("password")
+        shop_owner6 = User(name="店長F", email="shop6@example.com", phone="02-9876-5432", role="shop")
+        shop_owner6.set_password("password")
+        shop_owner7 = User(name="店長G", email="shop7@example.com", phone="02-6677-8899", role="shop")
+        shop_owner7.set_password("password")
+        shop_owner8 = User(name="店長H", email="shop8@example.com", phone="02-3355-8899", role="shop")
+        shop_owner8.set_password("password")
+        shop_owner9 = User(name="店長I", email="shop9@example.com", phone="02-2233-9911", role="shop")
+        shop_owner9.set_password("password")
+        shop_owner10 = User(name="店長J", email="shop10@example.com", phone="02-1122-3344", role="shop")
+        shop_owner10.set_password("password")
         admin = User(name="Admin", email="admin@example.com", role="admin")
         admin.set_password("admin123")
-        db.session.add_all([user, shop_owner1, shop_owner2, admin])
+        db.session.add_all([user, shop_owner1, shop_owner2, shop_owner3, shop_owner4, shop_owner5, shop_owner6, shop_owner7, shop_owner8, shop_owner9, shop_owner10, admin])
         db.session.commit()
 
         # 建立商家
@@ -52,6 +68,7 @@ def seed_data():
 
         shop3 = Shop(
             name="全家便利商店 - 復興店",
+            owner=shop_owner3,
             manager_email="shop3@example.com",
             phone="02-2222-3333",
             address="台北市大安區忠孝東路三段300號",
@@ -64,6 +81,7 @@ def seed_data():
 
         shop4 = Shop(
             name="仁愛市場 - 蔬果區",
+            owner=shop_owner4,
             manager_email="shop4@example.com",
             phone="02-2345-6789",
             address="台北市中正區濟南路二段1號",
@@ -76,6 +94,7 @@ def seed_data():
 
         shop5 = Shop(
             name="社區食物銀行 - 大直館",
+            owner=shop_owner5,
             manager_email="shop5@example.com",
             phone="02-5566-7788",
             address="台北市中山區北安路780號",
@@ -88,6 +107,7 @@ def seed_data():
 
         shop6 = Shop(
             name="吉祥里愛心廚房",
+            owner=shop_owner6,
             manager_email="shop6@example.com",
             phone="02-9876-5432",
             address="台北市萬華區艋舺大道211號",
@@ -100,6 +120,7 @@ def seed_data():
 
         shop7 = Shop(
             name="幸福早餐屋",
+            owner=shop_owner7,
             manager_email="shop7@example.com",
             phone="02-6677-8899",
             address="新北市板橋區文化路一段188號",
@@ -112,6 +133,7 @@ def seed_data():
 
         shop8 = Shop(
             name="樂活超商 - 三重店",
+            owner=shop_owner8,
             manager_email="shop8@example.com",
             phone="02-3355-8899",
             address="新北市三重區重新路四段15號",
@@ -124,6 +146,7 @@ def seed_data():
 
         shop9 = Shop(
             name="安心便利店 - 永和",
+            owner=shop_owner9,
             manager_email="shop9@example.com",
             phone="02-2233-9911",
             address="新北市永和區中山路一段22號",
@@ -136,6 +159,7 @@ def seed_data():
 
         shop10 = Shop(
             name="慈恩寺食物分享點",
+            owner=shop_owner10,
             manager_email="shop10@example.com",
             phone="02-1122-3344",
             address="新北市新店區北新路二段88號",

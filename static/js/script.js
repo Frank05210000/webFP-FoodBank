@@ -128,6 +128,20 @@ document.addEventListener('DOMContentLoaded', function() {
     // 首頁載入就先標記「物資最多」
     applyMostSupplyBadge();
 
+    // 商家註冊：一鍵填入目前經緯度（無需地圖）
+    if (fillLocationBtn && latInput && lngInput) {
+        fillLocationBtn.addEventListener('click', function() {
+            if (!navigator.geolocation) return;
+            navigator.geolocation.getCurrentPosition(function(pos) {
+                latInput.value = pos.coords.latitude.toFixed(6);
+                lngInput.value = pos.coords.longitude.toFixed(6);
+            }, function() {
+                var msg = fillLocationBtn.dataset.error || 'Unable to get your location.';
+                alert(msg);
+            });
+        });
+    }
+
     if (!mapElement) {
         return;
     }
@@ -240,17 +254,4 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initial icon update based on existing badges (e.g., most supply)
     setMarkerIcons();
 
-    // 商家註冊：一鍵填入目前經緯度
-    if (fillLocationBtn && latInput && lngInput) {
-        fillLocationBtn.addEventListener('click', function() {
-            if (!navigator.geolocation) return;
-            navigator.geolocation.getCurrentPosition(function(pos) {
-                latInput.value = pos.coords.latitude.toFixed(6);
-                lngInput.value = pos.coords.longitude.toFixed(6);
-            }, function() {
-                var msg = fillLocationBtn.dataset.error || 'Unable to get your location.';
-                alert(msg);
-            });
-        });
-    }
 });

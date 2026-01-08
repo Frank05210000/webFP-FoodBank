@@ -4,7 +4,7 @@ This guide walks through configuring and running the Food Bank Booking System lo
 
 ## Prerequisites
 - Python 3.13 (recommended) and `pip`
-- PostgreSQL running locally with a database named `final-hw`
+- PostgreSQL running locally（請自訂資料庫名稱與帳號密碼）
 - (Optional) `virtualenv`
 
 ## 1. Clone & Enter Project
@@ -18,7 +18,7 @@ cd webFP-FoodBank
 python3 -m venv venv
 source venv/bin/activate
 ```
-(Windows PowerShell: `venv\Scripts\Activate`)
+(Windows PowerShell: `venv\\Scripts\\Activate`)
 
 ## 3. Install Dependencies
 ```bash
@@ -32,7 +32,8 @@ export DATABASE_URL=postgresql://<user>:<password>@localhost/<db>
 export SECRET_KEY=<your-secret>
 ```
 
-Default `Config` already points to `postgresql://postgres:shi2xiu1@localhost/final-hw`.
+請以環境變數 `DATABASE_URL` 指定您的連線字串，範例：
+`postgresql://<user>:<password>@localhost/<db>`
 
 ## 5. Initialize Database
 ```bash

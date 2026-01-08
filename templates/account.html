@@ -12,7 +12,7 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label">{{ trans('field_phone') }}</label>
-                        <input type="text" class="form-control" name="phone" value="{{ current_user.phone }}">
+                        <input type="text" class="form-control" name="phone" value="{{ current_user.phone }}" pattern="09\d{8}" maxlength="10" placeholder="09xxxxxxxx">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">{{ trans('field_email') }}</label>

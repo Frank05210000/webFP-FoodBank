@@ -16,8 +16,9 @@
     <!-- 導航列 -->
     <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
       <div class="container">
-        <a class="navbar-brand fw-bold text-success" href="{{ url_for('index') }}">
-            <i class="bi bi-basket"></i> {{ trans('site_name') }}
+        <a class="navbar-brand fw-bold text-success d-flex align-items-center" href="{{ url_for('index') }}">
+            <img src="{{ url_for('static', filename='img/logo.png') }}" alt="{{ trans('site_name') }}" class="me-2" style="height: 32px; width: auto;">
+            {{ trans('site_name') }}
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
           <span class="navbar-toggler-icon"></span>
